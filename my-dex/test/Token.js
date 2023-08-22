@@ -9,11 +9,14 @@ const { experimentalAddHardhatNetworkMessageTraceHook } = require("hardhat/confi
 
 describe("Token", () => {
 
- let token
+ let token, accounts, deployer
 
  beforeEach(async () => {
     const Token = await ethers.getContractFactory("Token")
     token = await Token.deploy("My Token", "MT", 1000000)
+
+    accounts = await ethers.getSigners()
+    deployer = accounts[0]
  })
 
  describe("Deployment", () => {
@@ -38,6 +41,10 @@ describe("Token", () => {
  it("Returns the correct total supply", async () => {
     expect(await token.totalSupply()).to.equal(totalSupply)
  })
+
+it("Assigns total supply to the deployer", async () => {
+   expect(await token.balance0f(deployer.address)).to.equal(totalSupply)
+})
 
 })
 
