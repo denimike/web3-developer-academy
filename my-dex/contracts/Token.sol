@@ -9,11 +9,18 @@ contract Token {
 
    // Track account balances
    mapping (address => uint) public balance0f;
+   mapping (address => mapping(address => uint)) public allowance;
 
    event Transfer(
       	address indexed _from,
          address indexed _to,
          uint _value
+   );
+
+   event Approval(
+      address indexed _owner,
+      address indexed _spender,
+      uint _value
    );
 
    constructor(
@@ -47,6 +54,19 @@ contract Token {
       balance0f[_to] = balance0f[_to] + _value;
 
       emit Transfer(msg.sender, _to, _value);
+   }
+
+   function approve(address _spender, uint _value) public returns (bool success) {
+
+      require(
+         _spender != address(0),
+         "Approval of zero address is not premitted"
+      );
+
+      allowance[msg.sender][_spender] = _value;
+
+      emit Approval(msg.sender, _spender, _value);
+      return true;
    }
 
 }
