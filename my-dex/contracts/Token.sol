@@ -10,6 +10,12 @@ contract Token {
    // Track account balances
    mapping (address => uint) public balance0f;
 
+   event Transfer(
+      	address indexed _from,
+         address indexed _to,
+         uint _value
+   );
+
    constructor(
       string memory _name, 
       string memory _symbol, 
@@ -22,5 +28,26 @@ contract Token {
       totalSupply = _totalSupply * (10 ** decimals);
       balance0f[msg.sender] = totalSupply;
    }
+   //Erklärung: "function" ist der Aufruf der Funktion, "transfer" ist der Name der FUnktion "(Parameter)" address ist die Bezeichnung des
+   //Parameters und dahinter der Datentyp des Parameters "public" sagt aus, dass jeder die funktion aufrufen kann "bool" ist ein Datentyp
+   //der fest definiert ist, was die funktion zurückgeben soll, bool bedeutet, dass ein true oder false zurückgegeben werden kann 
+   function transfer(address _to, uint _value) public returns (bool success) {
+
+      require(
+         _to != address(0),
+         "Transferring to zero address is not permitted"
+      );
+
+      require(
+         balance0f[msg.sender] >= _value,
+         "Insufficient funds"
+      );
+
+      balance0f[msg.sender] = balance0f[msg.sender] - _value;
+      balance0f[_to] = balance0f[_to] + _value;
+
+      emit Transfer(msg.sender, _to, _value);
+   }
+
 }
 
