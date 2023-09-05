@@ -96,7 +96,7 @@ describe("Sending Tokens", () => {
 
   })
 
-  describe("Sending Tokens", () => {
+  describe("Approvals", () => {
 
    let amount, transaction, receipt
 
@@ -129,8 +129,53 @@ describe("Sending Tokens", () => {
   describe("Failing Approvals", () => {
       
       it("Rejects approval if spender is the zero address", async () => {
-        await expect(token.connect(deployer).approve("0x0000000000000000000000000000000000000000", amount)).to.be.revertedWith("Approval of zero address is not permitted")
+        await expect(token.connect(deployer).approve("0x0000000000000000000000000000000000000000", amount)).to.be.revertedWith("Approval to zero address is not permitted")
       })
+
+   })
+
+  })
+
+  describe("Delegated Token Transfers", () => {
+
+   let amount, transaction, receipt
+
+   beforeEach(async () => {
+      amount = tokens(100)
+      await token.connect(deployer).approve(decentralizedExchange.address, amount)
+   })
+
+   describe("Successful Delegated Token Transfers", () => {
+
+      beforeEach(async () => {
+         transaction = await token.connect(decentralizedExchange).transferFrom(deployer.address, receiver.address, amount)
+         receipt = await transaction.wait()
+      })
+   
+      it("Transfers tokens", async () => {
+         expect(await token.balance0f(deployer.address)).to.equal(tokens(999900))
+         expect(await token.balance0f(receiver.address)).to.equal(amount)
+      })
+   
+      it("Emits an Transfer event", async () => {
+         const event = receipt.events[0]
+         expect(event.event).to.equal("Transfer")
+   
+         const args = event.args
+         expect(args._from).to.equal(deployer.address)
+         expect(args._to).to.equal(receiver.address)
+         expect(args._value).to.equal(amount)
+     })
+
+     it("Resets the allowance", async () => {
+     
+   })
+   
+   })
+
+  describe("Failing Delegated Token Transfers", () => {
+      
+    // Tests for failig delegated token transfers go here
 
    })
 

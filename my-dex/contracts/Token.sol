@@ -60,12 +60,22 @@ contract Token {
 
       require(
          _spender != address(0),
-         "Approval of zero address is not premitted"
+         "Approval to zero address is not permitted"
       );
 
       allowance[msg.sender][_spender] = _value;
 
       emit Approval(msg.sender, _spender, _value);
+      return true;
+   } 
+
+   function transferFrom(address _from, address _to, uint _value) public returns (bool success) {
+
+      balance0f[_from] = balance0f[_from] - _value;
+      balance0f[_to] = balance0f[_to] + _value;
+
+      emit Transfer(_from, _to, _value);
+
       return true;
    }
 
